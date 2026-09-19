@@ -16,8 +16,9 @@
 | `/11` | Issue 番号 | Issue 用ブランチを作成または再利用し、Issue の実装と検証を行う | Git branch とコード・仕様・テストを変更する |
 | `/21` | Issue 番号 | 対象変更だけを検証してコミットする | Git commit を作成する |
 | `/31` | Issue 番号 | コミット済みの Issue 用ブランチから Pull Request を作成する | GitHub Pull Request を作成する |
+| `/41` | バージョン、リリース Issue 番号(任意) | `main` から配布物を作り、WordPress.org の SVN trunk へ反映する準備をする。公開後は状態を確認して Issue に記録する | SVN の作業コピーを変更する。Issue にコメントし、閉じる場合がある |
 
-`/01` は実装を行いません。`/11` はコミットを行いません。`/21` は Issue と無関係な変更をコミットしません。`/31` は未コミット変更を勝手にコミットしません。
+`/01` は実装を行いません。`/11` はコミットを行いません。`/21` は Issue と無関係な変更をコミットしません。`/31` は未コミット変更を勝手にコミットしません。`/41` は `svn commit` を実行しません。
 
 ## 3. Issue タイトル
 
@@ -330,3 +331,52 @@ feat: add event filtering (#12, #15)
 ## 11. 機密情報
 
 Issue にはパスワード、トークン、個人情報、ローカル固有の絶対パス、未公開の秘密情報を記載しません。ログやスクリーンショットを参照する場合は、機密部分を除去します。
+
+## 12. WordPress.org へのリリース
+
+リリースは、バージョン更新までを Issue 起点の通常の流れ(`/01` → `/11` → `/21` → `/31`)で行い、それ以降を `/41` で行います。
+
+### 12.1 バージョン更新(`/01`〜`/31`)
+
+リリース用の Issue を作成し、次の 5 か所のバージョン表記を同じ値に更新します。`readme.txt` の Changelog に、新バージョンの項目を英語で追加します。
+
+- `ototsugu-connector.php` の `Version`
+- `readme.txt` の `Stable tag`
+- `spec/SPECIFICATION.md` の現行バージョン
+- `blocks/event-list/editor.asset.php` の `version`
+- `includes/class-single-event.php` のスタイルのバージョン文字列
+
+リリース Issue は SVN への反映が終わるまで閉じません。PR の本文は、`Fixes #<number>` の代わりに `Refs #<number>` とします。
+
+### 12.2 `/41` の段階
+
+`/41 <バージョン> [#Issue番号]` は、`https://plugins.svn.wordpress.org/<スラッグ>/tags` に `<バージョン>` があるかで段階を判定します。
+
+| 段階 | 条件 | 内容 |
+| --- | --- | --- |
+| 1: 準備 | tag がない | `main` から配布物を作り、SVN の trunk へ反映して、利用者が実行するコマンドを示して停止する |
+| 2: 確認と記録 | tag がある | SVN、Stable tag、WordPress.org の API と公開ページを確認し、Issue に記録する。すべて確認できた場合のみ Issue を閉じる |
+
+開始前に、`origin/main` の 5 か所のバージョン表記が指定のバージョンであることを確認します。異なる場合は停止します。
+
+### 12.3 段階 1 の作業
+
+- 配布物は `git archive origin/main` の内容から、`.distignore` に書かれたものを除いて作る。作業は一時ディレクトリの中で行う
+- SVN の作業コピーは、このリポジトリの隣の `svn-<スラッグ>` を既定とし、作業前に `svn status` が空であること、`assets` の下などにリポジトリ全体の入れ子チェックアウトがないことを確認する
+- trunk への反映は、PowerShell で `robocopy /MIR /XD .svn` と `svn add --force trunk` を実行する
+- `svn commit` は、SVN のパスワード入力が必要なため、利用者が自分の端末で実行する。Claude は実行しない
+- tag(`svn cp trunk tags/<バージョン>`)は、trunk のコミットが成功してから作る
+
+利用者が実行するコマンドの順序は次のとおりです。
+
+```text
+svn commit trunk -m "Version <バージョン>" --username <SVNユーザー名>
+svn update
+svn cp trunk tags/<バージョン>
+svn commit tags/<バージョン> -m "Tagging version <バージョン>" --username <SVNユーザー名>
+```
+
+### 12.4 リリース後
+
+- 公開ページと API の反映には時間がかかることがある。反映が確認できるまで、リリース Issue は閉じない
+- 翻訳を受け付けている場合は、translate.wordpress.org での翻訳の登録が必要かを確認する
