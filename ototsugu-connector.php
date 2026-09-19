@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       Ototsugu Connector
  * Description:       Manages consultation event schedules and delivers them to apps through the REST API.
- * Version:           0.1.0
+ * Version:           0.2.0
  * Requires at least: 6.0
  * Requires PHP:      7.4
  * License:           GPL v2 or later

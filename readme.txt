@@ -4,7 +4,7 @@ Tags: events, rest-api, nonprofit
 Requires at least: 6.0
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 0.1.0
+Stable tag: 0.2.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -53,6 +53,12 @@ Published schedules are available through the standard REST API:
 Custom fields are included in the response `meta` as `start_at`, `time_note`, `location_name`, `location_address`, `status`, and `reservation_url`. The Google Maps link is generated from `location_address` at display time.
 
 == Changelog ==
+
+= 0.2.0 =
+* Prepared the plugin for translation on translate.wordpress.org. The source language of all user-facing strings is now English, including the block editor, the block metadata, and the plugin description.
+* Dates and weekday names are now formatted according to the site language.
+* Until a translation is available for your language, the admin screens and the front end display English text.
+* No changes to the stored data or the REST API response.
 
 = 0.1.0 =
 * Initial release. Adds the consultation event custom post type, REST API exposure, the event list block, and automatic detail appending on single event posts.

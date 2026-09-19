@@ -19,7 +19,7 @@ class OTSG_Single_Event
                 'otsg-single-event',
                 OTSG_PLUGIN_URL . 'assets/single-event.css',
                 [],
-                '0.1.0'
+                '0.2.0'
             );
         }
     }
