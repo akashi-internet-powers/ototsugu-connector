@@ -6,7 +6,7 @@
 
 - 対象リポジトリ: `ototsugu-connector`
 - プラグイン名: Ototsugu Connector
-- 現行バージョン: `0.1.0`
+- 現行バージョン: `0.2.0`
 - ライセンス: GPLv2 or later
 - 最低対応環境: WordPress 6.0、PHP 7.4
 
