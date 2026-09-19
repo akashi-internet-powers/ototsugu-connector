@@ -12,7 +12,7 @@ class OTSG_Post_Type
         add_action('manage_consultation_event_posts_custom_column', [self::class, 'render_column'], 10, 2);
 
         register_post_type('consultation_event', [
-            'label'        => __('相談会日程', 'ototsugu-connector'),
+            'label'        => __('Consultation Events', 'ototsugu-connector'),
             'public'       => true,
             'show_in_rest' => true, // consultation-app からの取得はこのフラグが前提
             'supports'     => ['title', 'editor', 'thumbnail', 'custom-fields'],
@@ -66,10 +66,10 @@ class OTSG_Post_Type
             $new_columns[$key] = $label;
 
             if ($key === 'title') {
-                $new_columns['start_at']     = __('開催日', 'ototsugu-connector');
-                $new_columns['time_note']    = __('時間帯', 'ototsugu-connector');
-                $new_columns['location_name'] = __('場所の名称', 'ototsugu-connector');
-                $new_columns['status']       = __('ステータス', 'ototsugu-connector');
+                $new_columns['start_at']     = __('Event Date', 'ototsugu-connector');
+                $new_columns['time_note']    = __('Time Note', 'ototsugu-connector');
+                $new_columns['location_name'] = __('Venue Name', 'ototsugu-connector');
+                $new_columns['status']       = __('Status', 'ototsugu-connector');
             }
         }
 
@@ -81,16 +81,16 @@ class OTSG_Post_Type
         $value = get_post_meta($post_id, $column, true);
 
         if ($column === 'start_at') {
-            $date = DateTimeImmutable::createFromFormat('Y-m-d\\TH:i', $value, wp_timezone());
-            echo $date ? esc_html($date->format('Y年n月j日')) : '';
+            $date = OTSG_Date::parse($value);
+            echo $date ? esc_html(OTSG_Date::full($date)) : '';
             return;
         }
 
         if ($column === 'status') {
             $labels = [
-                'open'   => __('受付中', 'ototsugu-connector'),
-                'full'   => __('満席', 'ototsugu-connector'),
-                'closed' => __('終了', 'ototsugu-connector'),
+                'open'   => __('Open', 'ototsugu-connector'),
+                'full'   => __('Full', 'ototsugu-connector'),
+                'closed' => __('Closed', 'ototsugu-connector'),
             ];
             echo esc_html($labels[$value ?: 'open'] ?? $value);
             return;

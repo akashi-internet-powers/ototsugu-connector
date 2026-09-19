@@ -20,7 +20,7 @@ $events = get_posts([
 ]);
 
 if (empty($events)) {
-    echo '<p>' . esc_html__('現在、公開中の相談会日程はありません。', 'ototsugu-connector') . '</p>';
+    echo '<p>' . esc_html__('There are no published consultation events at the moment.', 'ototsugu-connector') . '</p>';
     return;
 }
 
@@ -33,25 +33,12 @@ $date_format      = isset($attributes['dateFormat']) ? $attributes['dateFormat']
 $date_formats     = ['full', 'date', 'slash', 'short'];
 $date_format      = in_array($date_format, $date_formats, true) ? $date_format : 'full';
 $format_date      = static function (string $value) use ($date_format): string {
-    $date = DateTimeImmutable::createFromFormat('Y-m-d\\TH:i', $value, wp_timezone());
+    $date = OTSG_Date::parse($value);
     if (!$date) {
         return $value;
     }
 
-    $weekdays = ['日', '月', '火', '水', '木', '金', '土'];
-    $weekday  = $weekdays[(int) $date->format('w')];
-
-    switch ($date_format) {
-        case 'date':
-            return $date->format('Y年n月j日') . '（' . $weekday . '）';
-        case 'slash':
-            return $date->format('Y/m/d') . '（' . $weekday . '）';
-        case 'short':
-            return $date->format('n月j日') . '（' . $weekday . '）';
-        case 'full':
-        default:
-            return $date->format('Y年n月j日') . '（' . $weekday . '）';
-    }
+    return OTSG_Date::with_weekday($date, $date_format);
 };
 
 if ($layout === 'table') :
@@ -60,15 +47,15 @@ if ($layout === 'table') :
         <table class="otsg-event-table">
             <thead>
                 <tr>
-                    <th scope="col"><?php esc_html_e('開催日', 'ototsugu-connector'); ?></th>
-                    <th scope="col"><?php esc_html_e('相談会', 'ototsugu-connector'); ?></th>
-                    <th scope="col"><?php esc_html_e('開催場所', 'ototsugu-connector'); ?></th>
-                    <th scope="col"><?php esc_html_e('ステータス', 'ototsugu-connector'); ?></th>
+                    <th scope="col"><?php esc_html_e('Event Date', 'ototsugu-connector'); ?></th>
+                    <th scope="col"><?php esc_html_e('Consultation Event', 'ototsugu-connector'); ?></th>
+                    <th scope="col"><?php esc_html_e('Venue', 'ototsugu-connector'); ?></th>
+                    <th scope="col"><?php esc_html_e('Status', 'ototsugu-connector'); ?></th>
                     <?php if ($show_detail_link) : ?>
-                        <th scope="col"><?php esc_html_e('詳細', 'ototsugu-connector'); ?></th>
+                        <th scope="col"><?php esc_html_e('Details', 'ototsugu-connector'); ?></th>
                     <?php endif; ?>
                     <?php if ($show_reservation_link) : ?>
-                        <th scope="col"><?php esc_html_e('予約', 'ototsugu-connector'); ?></th>
+                        <th scope="col"><?php esc_html_e('Reservation', 'ototsugu-connector'); ?></th>
                     <?php endif; ?>
                 </tr>
             </thead>
@@ -100,9 +87,9 @@ foreach ($events as $event) :
     $status          = get_post_meta($event->ID, 'status', true) ?: 'open';
     $reservation_url = get_post_meta($event->ID, 'reservation_url', true);
     $status_label    = [
-        'open'   => __('受付中', 'ototsugu-connector'),
-        'full'   => __('満席', 'ototsugu-connector'),
-        'closed' => __('終了', 'ototsugu-connector'),
+        'open'   => __('Open', 'ototsugu-connector'),
+        'full'   => __('Full', 'ototsugu-connector'),
+        'closed' => __('Closed', 'ototsugu-connector'),
     ][$status] ?? '';
     $event_url       = get_permalink($event);
     $display_date    = $format_date($start_at);
@@ -117,16 +104,16 @@ foreach ($events as $event) :
             <td>
                 <?php echo esc_html($location_name); ?>
                 <?php if ($location_address) : ?><br><small><?php echo esc_html($location_address); ?></small><?php endif; ?>
-                <?php if ($map_url) : ?><br><a href="<?php echo esc_url($map_url); ?>" target="_blank" rel="noopener"><?php esc_html_e('地図を見る', 'ototsugu-connector'); ?></a><?php endif; ?>
+                <?php if ($map_url) : ?><br><a href="<?php echo esc_url($map_url); ?>" target="_blank" rel="noopener"><?php esc_html_e('View map', 'ototsugu-connector'); ?></a><?php endif; ?>
             </td>
             <td><?php echo esc_html($status_label); ?></td>
             <?php if ($show_detail_link) : ?>
-                <td><a href="<?php echo esc_url($event_url); ?>"><?php esc_html_e('詳細を見る', 'ototsugu-connector'); ?></a></td>
+                <td><a href="<?php echo esc_url($event_url); ?>"><?php esc_html_e('View details', 'ototsugu-connector'); ?></a></td>
             <?php endif; ?>
             <?php if ($show_reservation_link) : ?>
                 <td>
                     <?php if ($reservation_url && $status === 'open') : ?>
-                        <a href="<?php echo esc_url($reservation_url); ?>"><?php esc_html_e('予約する', 'ototsugu-connector'); ?></a>
+                        <a href="<?php echo esc_url($reservation_url); ?>"><?php esc_html_e('Make a reservation', 'ototsugu-connector'); ?></a>
                     <?php endif; ?>
                 </td>
             <?php endif; ?>
@@ -140,15 +127,15 @@ foreach ($events as $event) :
         <li class="otsg-event-card otsg-event-card--<?php echo esc_attr($status); ?>">
             <div class="otsg-event-card__date" aria-hidden="true">
                 <?php if ($card_date) : ?>
-                    <span class="otsg-event-card__month"><?php echo esc_html($card_date->format('n月')); ?></span>
-                    <strong class="otsg-event-card__day"><?php echo esc_html($card_date->format('j')); ?></strong>
-                    <span class="otsg-event-card__weekday"><?php echo esc_html(sprintf(
-                        /* translators: %s: 曜日を表す漢字1文字(例: 月) */
-                        __('%s曜日', 'ototsugu-connector'),
-                        ['日', '月', '火', '水', '木', '金', '土'][(int) $card_date->format('w')]
+                    <span class="otsg-event-card__month"><?php echo esc_html(OTSG_Date::format(
+                        $card_date,
+                        /* translators: Date format (PHP date() syntax) for the month shown on the event card, e.g. "M" for Sep. */
+                        _x('M', 'event card month format', 'ototsugu-connector')
                     )); ?></span>
+                    <strong class="otsg-event-card__day"><?php echo esc_html($card_date->format('j')); ?></strong>
+                    <span class="otsg-event-card__weekday"><?php echo esc_html(OTSG_Date::format($card_date, 'l')); ?></span>
                 <?php else : ?>
-                    <span class="otsg-event-card__month"><?php esc_html_e('開催日', 'ototsugu-connector'); ?></span>
+                    <span class="otsg-event-card__month"><?php esc_html_e('Event Date', 'ototsugu-connector'); ?></span>
                     <span class="otsg-event-card__day">-</span>
                 <?php endif; ?>
             </div>
@@ -163,12 +150,12 @@ foreach ($events as $event) :
                 <?php if ($location_name || $location_address) : ?>
                     <p class="otsg-event-card__location">
                         <?php echo esc_html($location_name); ?><?php if ($location_address) : ?> / <?php echo esc_html($location_address); ?><?php endif; ?>
-                        <?php if ($map_url) : ?> <a href="<?php echo esc_url($map_url); ?>" target="_blank" rel="noopener"><?php esc_html_e('地図', 'ototsugu-connector'); ?></a><?php endif; ?>
+                        <?php if ($map_url) : ?> <a href="<?php echo esc_url($map_url); ?>" target="_blank" rel="noopener"><?php esc_html_e('Map', 'ototsugu-connector'); ?></a><?php endif; ?>
                     </p>
                 <?php endif; ?>
                 <div class="otsg-event-card__actions">
-                    <?php if ($show_detail_link) : ?><a class="otsg-event-card__detail" href="<?php echo esc_url($event_url); ?>"><?php esc_html_e('詳細を見る', 'ototsugu-connector'); ?></a><?php endif; ?>
-                    <?php if ($show_reservation_link && $reservation_url && $status === 'open') : ?><a class="otsg-event-card__reserve" href="<?php echo esc_url($reservation_url); ?>"><?php esc_html_e('予約する', 'ototsugu-connector'); ?></a><?php endif; ?>
+                    <?php if ($show_detail_link) : ?><a class="otsg-event-card__detail" href="<?php echo esc_url($event_url); ?>"><?php esc_html_e('View details', 'ototsugu-connector'); ?></a><?php endif; ?>
+                    <?php if ($show_reservation_link && $reservation_url && $status === 'open') : ?><a class="otsg-event-card__reserve" href="<?php echo esc_url($reservation_url); ?>"><?php esc_html_e('Make a reservation', 'ototsugu-connector'); ?></a><?php endif; ?>
                 </div>
             </div>
             <?php if ($image_url) : ?>
@@ -188,7 +175,7 @@ foreach ($events as $event) :
         <span class="otsg-event-list__meta">
             <?php echo esc_html($display_date); ?> / <?php echo esc_html($location_name); ?>
             <?php if ($location_address) : ?> / <?php echo esc_html($location_address); ?><?php endif; ?>
-            <?php if ($map_url) : ?> / <a href="<?php echo esc_url($map_url); ?>" target="_blank" rel="noopener"><?php esc_html_e('地図', 'ototsugu-connector'); ?></a><?php endif; ?>
+            <?php if ($map_url) : ?> / <a href="<?php echo esc_url($map_url); ?>" target="_blank" rel="noopener"><?php esc_html_e('Map', 'ototsugu-connector'); ?></a><?php endif; ?>
         </span>
         <?php if ($time_note) : ?>
             <span class="otsg-event-list__time-note">(<?php echo esc_html($time_note); ?>)</span>
@@ -196,7 +183,7 @@ foreach ($events as $event) :
         <span class="otsg-event-list__status"><?php echo esc_html($status_label); ?></span>
         <?php if ($show_reservation_link && $reservation_url && $status === 'open') : ?>
             <span class="otsg-event-list__reserve">
-                <a href="<?php echo esc_url($reservation_url); ?>"><?php esc_html_e('予約する', 'ototsugu-connector'); ?></a>
+                <a href="<?php echo esc_url($reservation_url); ?>"><?php esc_html_e('Make a reservation', 'ototsugu-connector'); ?></a>
             </span>
         <?php endif; ?>
     </li>

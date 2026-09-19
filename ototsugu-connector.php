@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name:       Ototsugu Connector
- * Description:       相談会の日程を管理し、REST API経由でアプリへ配信するプラグイン。
+ * Description:       Manages consultation event schedules and delivers them to apps through the REST API.
  * Version:           0.1.0
  * Requires at least: 6.0
  * Requires PHP:      7.4
@@ -17,6 +17,7 @@ if (!defined('ABSPATH')) {
 define('OTSG_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('OTSG_PLUGIN_URL', plugin_dir_url(__FILE__));
 
+require_once OTSG_PLUGIN_DIR . 'includes/class-date.php';
 require_once OTSG_PLUGIN_DIR . 'includes/class-post-type.php';
 require_once OTSG_PLUGIN_DIR . 'includes/class-meta-box.php';
 require_once OTSG_PLUGIN_DIR . 'includes/class-rest-api.php';

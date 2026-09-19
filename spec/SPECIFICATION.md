@@ -41,6 +41,7 @@
 ```text
 ototsugu-connector.php           プラグインの起動、フック登録、rewrite 更新
 includes/
+  class-date.php                  開催日の表示整形(書式は翻訳可能、月名・曜日名はロケール準拠)
   class-post-type.php             投稿タイプと投稿メタの登録
   class-meta-box.php              管理画面の入力 UI と保存
   class-rest-api.php              REST API 拡張の登録箇所
@@ -149,6 +150,14 @@ https://www.google.com/maps/search/?api=1&query={会場名と住所}
 | `showDetailLink` | boolean | `true` | 詳細ページへのリンク表示 |
 | `showReservationLink` | boolean | `true` | 予約 URL リンク表示 |
 
+`dateFormat` の値は言語に依存しない内部値です。表示は、サイトのロケールに従います。
+
+| 値 | 内容 | 英語ロケールの例 | 日本語ロケールの例 |
+| --- | --- | --- | --- |
+| `full`、`date` | 年月日と曜日 | `September 6, 2026 (Sun)` | `2026年9月6日（日）` |
+| `slash` | スラッシュ区切りの年月日と曜日 | `2026/09/06 (Sun)` | `2026/09/06（日）` |
+| `short` | 年を省いた月日と曜日 | `Sep 6 (Sun)` | `9月6日（日）` |
+
 ### リンク表示条件
 
 - 詳細リンク: `showDetailLink` が有効な場合に表示
@@ -196,6 +205,16 @@ GET /wp-json/wp/v2/consultation_event/{id}
 - 詳細ページが 404 の場合は、プラグインの再有効化またはパーマリンク設定の保存で rewrite ルールを再生成する
 - 外部アプリから Local の REST API を参照する場合は、公開可能な検証 URL またはトンネルを用意する
 
+### 多言語対応
+
+- 表示文字列は、翻訳関数と Text Domain `ototsugu-connector` で包む。元の文字列(msgid)は英語とする
+- 対象は、PHP、ブロックエディター用スクリプト(`editor.js`)、`block.json` の `title` と `description`、プラグインヘッダーの `Description`
+- 翻訳は translate.wordpress.org で受け付ける。プラグインには言語ファイルを同梱せず、`Domain Path` ヘッダーも設けない
+- 日付の書式文字列は翻訳可能とし、月名・曜日名は `wp_date()` でサイトのロケールに従って取得する。日付と曜日の組み立ては `includes/class-date.php` に集約する
+- `status` の保存値(`open`、`full`、`closed`)、ブロック属性の値、REST API の応答は言語に依存しない。翻訳されるのは画面上の表示だけである
+- 利用者が入力した内容(タイトル、本文、時間帯、場所の名称、住所)は翻訳の対象外とする
+- 本仕様書に書く画面上の名称は日本語表示のものである。英語表示では、「相談会日程」は Consultation Events、「相談会日程一覧」は Consultation Event List、「相談会 詳細情報」は Consultation Event Details となる
+
 ## 11. 将来拡張
 
 優先度や実装時期は別途決定します。
@@ -218,5 +237,6 @@ GET /wp-json/wp/v2/consultation_event/{id}
 - 詳細、予約、地図リンクの表示条件を確認する
 - 同日複数日程の並び順を確認する
 - 既存の旧 `location` データが壊れず表示される
+- 英語ロケールと日本語ロケールの両方で、画面上の文字列と日付・曜日の表示を確認する(翻訳関数の外に日本語や英語の文言を直書きしない)
 - Local とリポジトリの実装ファイルが一致している
 - `git diff --check` と PHP/JSON/JavaScript の診断を実行する
