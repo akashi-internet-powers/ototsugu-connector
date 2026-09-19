@@ -25,7 +25,7 @@ class OTSG_Meta_Box
     {
         add_meta_box(
             'otsg_event_details',
-            __('相談会 詳細情報', 'ototsugu-connector'),
+            __('Consultation Event Details', 'ototsugu-connector'),
             [self::class, 'render'],
             'consultation_event',
             'normal',
@@ -45,40 +45,40 @@ class OTSG_Meta_Box
         $reservation_url = get_post_meta($post->ID, 'reservation_url', true);
         ?>
         <p>
-                 <label for="otsg_start_at"><?php esc_html_e('開催日・並び順', 'ototsugu-connector'); ?></label><br>
+                 <label for="otsg_start_at"><?php esc_html_e('Date & Sort Order', 'ototsugu-connector'); ?></label><br>
             <input type="datetime-local" id="otsg_start_at" name="otsg_start_at"
                    value="<?php echo esc_attr($start_at); ?>">
-                 <span class="description"><?php esc_html_e('同日に複数の日程がある場合、この日時の時刻を一覧の並び順に使用します。表示上の時間帯は下の「時間帯」に入力します。', 'ototsugu-connector'); ?></span>
+                 <span class="description"><?php esc_html_e('When there are several sessions on the same day, the time of this date and time is used to sort them in the list. Enter the time slots to display in "Time Note" below.', 'ototsugu-connector'); ?></span>
         </p>
         <p>
-            <label for="otsg_time_note"><?php esc_html_e('時間帯(表示用・自由記述)', 'ototsugu-connector'); ?></label><br>
+            <label for="otsg_time_note"><?php esc_html_e('Time Note (displayed, free text)', 'ototsugu-connector'); ?></label><br>
             <input type="text" id="otsg_time_note" name="otsg_time_note" class="widefat"
-                   placeholder="<?php echo esc_attr__('例: 10:00〜 / 13:00〜 / 15:00〜(各回45分)', 'ototsugu-connector'); ?>"
+                   placeholder="<?php echo esc_attr__('e.g. 10:00 / 13:00 / 15:00 (45 minutes each)', 'ototsugu-connector'); ?>"
                    value="<?php echo esc_attr($time_note); ?>">
-            <span class="description"><?php esc_html_e('複数時間枠がある場合も、厳密な枠管理はせず表示用の文言としてここに記載します。', 'ototsugu-connector'); ?></span>
+            <span class="description"><?php esc_html_e('Even when there are multiple time slots, they are not managed strictly; describe them here as display text.', 'ototsugu-connector'); ?></span>
         </p>
         <p>
-            <label for="otsg_location_name"><?php esc_html_e('場所の名称', 'ototsugu-connector'); ?></label><br>
+            <label for="otsg_location_name"><?php esc_html_e('Venue Name', 'ototsugu-connector'); ?></label><br>
             <input type="text" id="otsg_location_name" name="otsg_location_name" class="widefat"
-                   placeholder="<?php echo esc_attr__('例: ○○市民センター', 'ototsugu-connector'); ?>"
+                   placeholder="<?php echo esc_attr__('e.g. City Community Center', 'ototsugu-connector'); ?>"
                    value="<?php echo esc_attr($location_name); ?>">
         </p>
         <p>
-            <label for="otsg_location_address"><?php esc_html_e('住所', 'ototsugu-connector'); ?></label><br>
+            <label for="otsg_location_address"><?php esc_html_e('Address', 'ototsugu-connector'); ?></label><br>
             <input type="text" id="otsg_location_address" name="otsg_location_address" class="widefat"
-                   placeholder="<?php echo esc_attr__('例: 東京都○○区○○1-2-3', 'ototsugu-connector'); ?>"
+                   placeholder="<?php echo esc_attr__('e.g. 1-2-3 Example Street, Example City', 'ototsugu-connector'); ?>"
                    value="<?php echo esc_attr($location_address); ?>">
         </p>
         <p>
-            <label for="otsg_status"><?php esc_html_e('ステータス', 'ototsugu-connector'); ?></label><br>
+            <label for="otsg_status"><?php esc_html_e('Status', 'ototsugu-connector'); ?></label><br>
             <select id="otsg_status" name="otsg_status">
-                <option value="open" <?php selected($status, 'open'); ?>><?php esc_html_e('受付中', 'ototsugu-connector'); ?></option>
-                <option value="full" <?php selected($status, 'full'); ?>><?php esc_html_e('満席', 'ototsugu-connector'); ?></option>
-                <option value="closed" <?php selected($status, 'closed'); ?>><?php esc_html_e('終了', 'ototsugu-connector'); ?></option>
+                <option value="open" <?php selected($status, 'open'); ?>><?php esc_html_e('Open', 'ototsugu-connector'); ?></option>
+                <option value="full" <?php selected($status, 'full'); ?>><?php esc_html_e('Full', 'ototsugu-connector'); ?></option>
+                <option value="closed" <?php selected($status, 'closed'); ?>><?php esc_html_e('Closed', 'ototsugu-connector'); ?></option>
             </select>
         </p>
         <p>
-            <label for="otsg_reservation_url"><?php esc_html_e('予約URL(外部システム)', 'ototsugu-connector'); ?></label><br>
+            <label for="otsg_reservation_url"><?php esc_html_e('Reservation URL (external system)', 'ototsugu-connector'); ?></label><br>
             <input type="url" id="otsg_reservation_url" name="otsg_reservation_url" class="widefat"
                    value="<?php echo esc_attr($reservation_url); ?>">
         </p>

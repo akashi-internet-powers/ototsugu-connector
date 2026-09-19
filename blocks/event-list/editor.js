@@ -2,10 +2,10 @@
     var __ = wp.i18n.__;
 
     wp.blocks.registerBlockType('ototsugu-connector/event-list', {
-        title: __('相談会日程一覧', 'ototsugu-connector'),
+        title: __('Consultation Event List', 'ototsugu-connector'),
         category: 'widgets',
         icon: 'calendar-alt',
-        description: __('相談会の日程一覧をWeb表示する動的ブロック。', 'ototsugu-connector'),
+        description: __('A dynamic block that displays the consultation event list on the front end.', 'ototsugu-connector'),
         attributes: {
             layout: {
                 type: 'string',
@@ -43,38 +43,41 @@
                     InspectorControls,
                     null,
                     wp.element.createElement(SelectControl, {
-                        label: __('表示形式', 'ototsugu-connector'),
+                        label: __('Display format', 'ototsugu-connector'),
                         value: props.attributes.layout,
                         options: [
-                            { label: __('一行表示', 'ototsugu-connector'), value: 'list' },
-                            { label: __('表形式', 'ototsugu-connector'), value: 'table' },
-                            { label: __('カード形式', 'ototsugu-connector'), value: 'card' },
+                            { label: __('Single line', 'ototsugu-connector'), value: 'list' },
+                            { label: __('Table', 'ototsugu-connector'), value: 'table' },
+                            { label: __('Cards', 'ototsugu-connector'), value: 'card' },
                         ],
                         onChange: function (layout) {
                             props.setAttributes({ layout: layout });
                         },
                     }),
                     wp.element.createElement(SelectControl, {
-                        label: __('日付表示', 'ototsugu-connector'),
+                        label: __('Date format', 'ototsugu-connector'),
                         value: props.attributes.dateFormat,
                         options: [
-                            { label: '2026年9月6日（日）', value: 'full' },
-                            { label: '2026/09/06（日）', value: 'slash' },
-                            { label: '9月6日（日）', value: 'short' },
+                            /* translators: Example of the "full" date display format, with the weekday. Use the date format of your language. */
+                            { label: __('September 6, 2026 (Sun)', 'ototsugu-connector'), value: 'full' },
+                            /* translators: Example of the "slash" date display format, with the weekday. */
+                            { label: __('2026/09/06 (Sun)', 'ototsugu-connector'), value: 'slash' },
+                            /* translators: Example of the "short" date display format (without the year), with the weekday. */
+                            { label: __('Sep 6 (Sun)', 'ototsugu-connector'), value: 'short' },
                         ],
                         onChange: function (dateFormat) {
                             props.setAttributes({ dateFormat: dateFormat });
                         },
                     }),
                     wp.element.createElement(ToggleControl, {
-                        label: __('詳細リンクを表示', 'ototsugu-connector'),
+                        label: __('Show detail link', 'ototsugu-connector'),
                         checked: props.attributes.showDetailLink,
                         onChange: function (showDetailLink) {
                             props.setAttributes({ showDetailLink: showDetailLink });
                         },
                     }),
                     wp.element.createElement(ToggleControl, {
-                        label: __('予約URLリンクを表示', 'ototsugu-connector'),
+                        label: __('Show reservation link', 'ototsugu-connector'),
                         checked: props.attributes.showReservationLink,
                         onChange: function (showReservationLink) {
                             props.setAttributes({ showReservationLink: showReservationLink });
@@ -84,7 +87,7 @@
                 wp.element.createElement(
                     'p',
                     blockProps,
-                    __('相談会日程一覧（公開画面で表示されます）', 'ototsugu-connector')
+                    __('Consultation event list (displayed on the front end)', 'ototsugu-connector')
                 )
             );
         },

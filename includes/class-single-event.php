@@ -44,36 +44,36 @@ class OTSG_Single_Event
         }
 
         $fields = [];
-        $date   = DateTimeImmutable::createFromFormat('Y-m-d\\TH:i', $start_at, wp_timezone());
+        $date   = OTSG_Date::parse($start_at);
 
         if ($date) {
-            $fields[] = '<dt>' . esc_html__('開催日', 'ototsugu-connector') . '</dt><dd>' . esc_html($date->format('Y年n月j日')) . '</dd>';
+            $fields[] = '<dt>' . esc_html__('Event Date', 'ototsugu-connector') . '</dt><dd>' . esc_html(OTSG_Date::full($date)) . '</dd>';
         }
         if ($time_note) {
-            $fields[] = '<dt>' . esc_html__('時間帯', 'ototsugu-connector') . '</dt><dd>' . esc_html($time_note) . '</dd>';
+            $fields[] = '<dt>' . esc_html__('Time Note', 'ototsugu-connector') . '</dt><dd>' . esc_html($time_note) . '</dd>';
         }
         if ($location_name) {
-            $fields[] = '<dt>' . esc_html__('場所の名称', 'ototsugu-connector') . '</dt><dd>' . esc_html($location_name) . '</dd>';
+            $fields[] = '<dt>' . esc_html__('Venue Name', 'ototsugu-connector') . '</dt><dd>' . esc_html($location_name) . '</dd>';
         }
         if ($location_address) {
-            $fields[] = '<dt>' . esc_html__('住所', 'ototsugu-connector') . '</dt><dd>' . esc_html($location_address) . '</dd>';
+            $fields[] = '<dt>' . esc_html__('Address', 'ototsugu-connector') . '</dt><dd>' . esc_html($location_address) . '</dd>';
         }
 
         $status_labels = [
-            'open'   => __('受付中', 'ototsugu-connector'),
-            'full'   => __('満席', 'ototsugu-connector'),
-            'closed' => __('終了', 'ototsugu-connector'),
+            'open'   => __('Open', 'ototsugu-connector'),
+            'full'   => __('Full', 'ototsugu-connector'),
+            'closed' => __('Closed', 'ototsugu-connector'),
         ];
         $status_label = $status_labels[$status] ?? $status;
-        $fields[]      = '<dt>' . esc_html__('ステータス', 'ototsugu-connector') . '</dt><dd>' . esc_html($status_label) . '</dd>';
+        $fields[]      = '<dt>' . esc_html__('Status', 'ototsugu-connector') . '</dt><dd>' . esc_html($status_label) . '</dd>';
 
         $details = '<section class="otsg-event-details">'
-            . '<h2>' . esc_html__('相談会 詳細情報', 'ototsugu-connector') . '</h2>'
+            . '<h2>' . esc_html__('Consultation Event Details', 'ototsugu-connector') . '</h2>'
             . '<dl>' . implode('', $fields) . '</dl>';
 
         if ($reservation_url && $status === 'open') {
             $details .= '<p class="otsg-event-details__reservation">'
-                . '<a href="' . esc_url($reservation_url) . '" target="_blank" rel="noopener">' . esc_html__('予約する', 'ototsugu-connector') . '</a>'
+                . '<a href="' . esc_url($reservation_url) . '" target="_blank" rel="noopener">' . esc_html__('Make a reservation', 'ototsugu-connector') . '</a>'
                 . '</p>';
         }
 

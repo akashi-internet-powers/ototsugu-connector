@@ -26,8 +26,8 @@ class OTSG_Settings
     {
         add_submenu_page(
             'edit.php?post_type=consultation_event',
-            __('相談会日程設定', 'ototsugu-connector'),
-            __('設定', 'ototsugu-connector'),
+            __('Consultation Event Settings', 'ototsugu-connector'),
+            __('Settings', 'ototsugu-connector'),
             'manage_options',
             self::PAGE_SLUG,
             [self::class, 'render_page']
@@ -44,14 +44,14 @@ class OTSG_Settings
 
         add_settings_section(
             'otsg_display_settings',
-            __('詳細画面の表示設定', 'ototsugu-connector'),
+            __('Single Event Display Settings', 'ototsugu-connector'),
             '__return_false',
             self::PAGE_SLUG
         );
 
         add_settings_field(
             self::OPTION_NAME,
-            __('レイアウト', 'ototsugu-connector'),
+            __('Layout', 'ototsugu-connector'),
             [self::class, 'render_layout_field'],
             self::PAGE_SLUG,
             'otsg_display_settings'
@@ -68,10 +68,10 @@ class OTSG_Settings
         $layout = self::get_detail_layout();
         ?>
         <select name="<?php echo esc_attr(self::OPTION_NAME); ?>">
-            <option value="standard" <?php selected($layout, 'standard'); ?>><?php esc_html_e('標準表示', 'ototsugu-connector'); ?></option>
-            <option value="two-pane" <?php selected($layout, 'two-pane'); ?>><?php esc_html_e('2ペイン表示', 'ototsugu-connector'); ?></option>
+            <option value="standard" <?php selected($layout, 'standard'); ?>><?php esc_html_e('Standard', 'ototsugu-connector'); ?></option>
+            <option value="two-pane" <?php selected($layout, 'two-pane'); ?>><?php esc_html_e('Two-pane', 'ototsugu-connector'); ?></option>
         </select>
-        <p class="description"><?php esc_html_e('2ペイン表示では、本文を左側、相談会の詳細情報を右側に表示します。モバイル幅では1カラムに切り替わります。', 'ototsugu-connector'); ?></p>
+        <p class="description"><?php esc_html_e('In the two-pane layout, the post content is shown on the left and the consultation event details on the right. On narrow (mobile) screens it switches to a single column.', 'ototsugu-connector'); ?></p>
         <?php
     }
 
@@ -79,7 +79,7 @@ class OTSG_Settings
     {
         ?>
         <div class="wrap">
-            <h1><?php esc_html_e('相談会日程設定', 'ototsugu-connector'); ?></h1>
+            <h1><?php esc_html_e('Consultation Event Settings', 'ototsugu-connector'); ?></h1>
             <form method="post" action="options.php">
                 <?php
                 settings_fields('otsg_settings');
